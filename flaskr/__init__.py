@@ -6,9 +6,6 @@ from routes import init_routes
 
 from models import setup_db
 
-QUESTIONS_PER_PAGE = 10
-
-
 def create_app(test_config=None):
 
     # create and configure the app
