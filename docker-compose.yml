@@ -1,0 +1,58 @@
+volumes:
+  rest-vol:
+  rest-test-vol:
+
+services:
+
+  pgsql:
+    build: 
+      context: .
+      dockerfile: ./docker/postgres.Dockerfile
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: pwd # environment variable that sets the superuser password for PostgreSQL
+      POSTGRES_USER: usr # variable that will create the specified user with superuser power and a database with the same name
+      POSTGRES_DB: rest
+    volumes:
+      - rest-vol:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  pgsql-test:
+    build: 
+      context: .
+      dockerfile: ./docker/postgres.test.Dockerfile
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: pwd # environment variable that sets the superuser password for PostgreSQL
+      POSTGRES_USER: usr # variable that will create the specified user with superuser power and a database with the same name
+      POSTGRES_DB: rest
+    volumes:
+      - rest-test-vol:/var/lib/postgresql/data
+    ports:
+      - 5433:5433
+
+  pgadmin:
+    image: dpage/pgadmin4:6.12
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: pwd # environment variable that sets the superuser password for PostgreSQL
+      PGADMIN_DEFAULT_EMAIL: usr@domain.com
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - 8080:8080
+    depends_on:
+      - pgsql
+      - pgsql-test
+
+  python:
+    build: 
+      context: .
+      dockerfile: ./docker/python.Dockerfile
+    ports:
+      - 80:5000
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - pgsql
+      - pgsql-test

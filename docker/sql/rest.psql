@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS categories (
+    id SERIAL PRIMARY KEY,
+    type TEXT
+);
+
+ALTER TABLE categories OWNER TO usr;
+
+CREATE TABLE IF NOT EXISTS items (
+    id SERIAL PRIMARY KEY,
+    item TEXT,
+    category INTEGER
+);
+
+INSERT INTO categories
+    (type) 
+VALUES
+    ('some_categ'),
+    ('some_categb'),
+    ('some_categc'),
+    ('some_categd'),
+    ('some_catege'),
+    ('some_categf');
+
+INSERT INTO items
+    (item, category)
+VALUES
+    ('item', 4),
+    ('item2', 4),
+    ('item3', 5),
+    ('item4', 5),
+    ('item5', 5),
+    ('item6', 6),
+    ('item7', 6),
+    ('item7', 4),
+    ('item8', 3),
+    ('item9', 3),
+    ('item10', 3)
+
+ALTER TABLE items
+    ADD CONSTRAINT fk_items_categories FOREIGN KEY (category) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET NULL;
